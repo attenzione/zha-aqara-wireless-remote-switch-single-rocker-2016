@@ -1,0 +1,73 @@
+---
+blueprint:
+  name: '[ZHA] Aqara Wireless Remote Switch (Single Rocker) (2016 version) (WXKG03LM)'
+  description: Automate your Aqara Wireless Remote Switch (Single Rocker) (2016 version) using ZHA events.
+  domain: automation
+  input:
+    aqara_switch:
+      name: Switch
+      description: Mijia Wireless Switch
+      selector:
+        device:
+          integration: zha
+          manufacturer: LUMI
+          model: lumi.sensor_86sw1
+    remote_button_short_press:
+      name: Single Press
+      description: Action to run on single press
+      default: []
+      selector:
+        action: {}
+    # remote_button_hold_press:
+    #   name: Hold
+    #   description: Action to run on hold
+    #   default: []
+    #   selector:
+    #     action: {}
+    # hold_delay:
+    #   name: Time interval for hold detection, in seconds
+    #   description: Time to wait until hold_press is activated
+    #   default: 0.60
+    #   selector:
+    #     number:
+    #       min: 0.15
+    #       max: 2.5
+    #       unit_of_measurement: seconds
+    #       step: 0.05
+    #       mode: slider
+mode: parallel
+max_exceeded: silent
+trigger:
+  - platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input 'aqara_switch'
+action:
+  - variables:
+      attribute_name: '{{ trigger.event.data.args.attribute_name }}'
+      value: '{{ trigger.event.data.args.value }}'
+      command: '{{ trigger.event.data.command }}'
+  - choose:
+      - conditions:
+          - '{{ attribute_name == ''on_off'' }}'
+          - '{{ value == ''Bool.true'' }}'
+        sequence: !input 'remote_button_short_press'
+        # sequence:
+        #   - wait_for_trigger:
+        #       - platform: event
+        #         event_type: zha_event
+        #         event_data:
+        #           device_id: !input 'aqara_switch'
+        #           command: 'attribute_updated'
+        #           args:
+        #             attribute_id: 0
+        #             attribute_name: on_off
+        #             value: 0
+        #     continue_on_timeout: true
+        #     timeout: !input 'hold_delay'
+        #   - choose:
+        #       - conditions:
+        #           - condition: template
+        #             value_template: '{{ not wait.trigger }}'
+        #         sequence: !input 'remote_button_hold_press'
+        #     default: !input 'remote_button_short_press'
