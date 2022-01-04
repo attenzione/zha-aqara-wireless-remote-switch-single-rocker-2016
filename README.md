@@ -1,5 +1,5 @@
 
-Xiaomi Mijia Round Wireless Switch (2016)
+Automate your Xiaomi Aqara Wireless Remote Switch (Single Rocker) (2016 version) using ZHA events.
 =====================
 
 <img src="wxkg03lm.jpg" width="320">
