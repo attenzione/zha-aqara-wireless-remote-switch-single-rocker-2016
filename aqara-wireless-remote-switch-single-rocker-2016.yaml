@@ -35,7 +35,7 @@ blueprint:
     #       unit_of_measurement: seconds
     #       step: 0.05
     #       mode: slider
-mode: parallel
+mode: restart
 max_exceeded: silent
 trigger:
   - platform: event
